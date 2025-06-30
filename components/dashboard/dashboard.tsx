@@ -22,11 +22,10 @@ import {
   Users,
   Calendar,
   Bell,
-  Settings,
-  ShoppingBag,
-  Receipt,
-  Zap
+  Settings
 } from 'lucide-react';
+import { LoanApplication } from './loan-application';
+import { PaymentSchedule } from './payment-schedule';
 import { VaultDashboard } from './vault-dashboard';
 import { TransactionHistory } from './transaction-history';
 import { ProfileSettings } from './profile-settings';
@@ -35,15 +34,15 @@ export function Dashboard() {
   const { user, loading: userLoading } = useUser();
   const { loans, loading: loansLoading } = useLoans();
   const [activeTab, setActiveTab] = useState('overview');
+  const [showLoanModal, setShowLoanModal] = useState(false);
 
   if (userLoading || loansLoading) {
     return <div className="p-8">Loading...</div>;
   }
 
-  const totalSpent = loans.reduce((sum, loan) => sum + loan.amount, 0);
-  const totalRemaining = loans.reduce((sum, loan) => sum + loan.remainingBalance, 0);
+  const totalDebt = loans.reduce((sum, loan) => sum + loan.remainingBalance, 0);
   const nextPayment = loans.reduce((sum, loan) => sum + loan.nextPaymentAmount, 0);
-  const creditUtilization = user ? (totalRemaining / (user.creditScore * 100)) * 100 : 0;
+  const creditUtilization = user ? (totalDebt / (user.creditScore * 100)) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -76,11 +75,12 @@ export function Dashboard() {
 
       <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="purchases">Purchases</TabsTrigger>
+            <TabsTrigger value="loans">Loans</TabsTrigger>
             <TabsTrigger value="payments">Payments</TabsTrigger>
             <TabsTrigger value="vault">Vault</TabsTrigger>
+            <TabsTrigger value="history">History</TabsTrigger>
             <TabsTrigger value="profile">Profile</TabsTrigger>
           </TabsList>
 
@@ -107,7 +107,7 @@ export function Dashboard() {
                   <CreditCard className="h-4 w-4 text-blue-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">KES {((user?.creditScore || 0) * 100 - totalRemaining).toLocaleString()}</div>
+                  <div className="text-2xl font-bold">KES {((user?.creditScore || 0) * 100 - totalDebt).toLocaleString()}</div>
                   <p className="text-xs text-muted-foreground">
                     {creditUtilization.toFixed(1)}% utilization
                   </p>
@@ -117,13 +117,13 @@ export function Dashboard() {
 
               <Card className="border-0 shadow-lg">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Purchases</CardTitle>
-                  <ShoppingBag className="h-4 w-4 text-purple-600" />
+                  <CardTitle className="text-sm font-medium">Total Debt</CardTitle>
+                  <DollarSign className="h-4 w-4 text-orange-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">KES {totalSpent.toLocaleString()}</div>
+                  <div className="text-2xl font-bold">KES {totalDebt.toLocaleString()}</div>
                   <p className="text-xs text-muted-foreground">
-                    Across {loans.length} BNPL purchases
+                    Across {loans.length} active loans
                   </p>
                 </CardContent>
               </Card>
@@ -145,19 +145,19 @@ export function Dashboard() {
             {/* Quick Actions */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
-                    onClick={() => window.location.href = '/marketplace'}>
+                    onClick={() => setShowLoanModal(true)}>
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    <ShoppingBag className="w-5 h-5 text-green-600" />
-                    <span>Shop Marketplace</span>
+                    <PlusCircle className="w-5 h-5 text-green-600" />
+                    <span>Apply for Loan</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Browse thousands of products with instant BNPL approval
+                    Get instant approval for loans up to KES {((user?.creditScore || 0) * 100).toLocaleString()}
                   </p>
                   <Button className="w-full mt-4 bg-green-600 hover:bg-green-700">
-                    Start Shopping
+                    Apply Now
                   </Button>
                 </CardContent>
               </Card>
@@ -171,7 +171,7 @@ export function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Earn up to 12% APY on your USDC deposits
+                    Earn up to 12% APY on your idle crypto assets
                   </p>
                   <Button variant="outline" className="w-full mt-4">
                     Start Earning
@@ -182,13 +182,13 @@ export function Dashboard() {
               <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    <Receipt className="w-5 h-5 text-purple-600" />
+                    <CreditCard className="w-5 h-5 text-purple-600" />
                     <span>Make Payment</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Pay your BNPL installments early and improve your credit score
+                    Pay your loans early and improve your credit score
                   </p>
                   <Button variant="outline" className="w-full mt-4">
                     Pay Now
@@ -207,24 +207,24 @@ export function Dashboard() {
                   {[
                     {
                       type: 'payment',
-                      description: 'BNPL payment received',
+                      description: 'Loan payment received',
                       amount: 'KES 8,750',
                       time: '2 hours ago',
                       icon: ArrowDownRight,
                       color: 'text-green-600',
                     },
                     {
-                      type: 'purchase',
-                      description: 'New BNPL purchase',
-                      amount: 'KES 25,000',
+                      type: 'loan',
+                      description: 'New loan disbursed',
+                      amount: 'USD 1,500',
                       time: '1 day ago',
-                      icon: ShoppingBag,
+                      icon: ArrowUpRight,
                       color: 'text-blue-600',
                     },
                     {
                       type: 'yield',
                       description: 'Vault yield claimed',
-                      amount: 'USDC 15.50',
+                      amount: 'ETH 0.05',
                       time: '3 days ago',
                       icon: TrendingUp,
                       color: 'text-purple-600',
@@ -248,82 +248,20 @@ export function Dashboard() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="purchases">
-            <Card className="border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <ShoppingBag className="w-5 h-5 text-green-600" />
-                  <span>Your BNPL Purchases</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {loans.map((loan) => (
-                    <div key={loan.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <h3 className="font-semibold">Purchase #{loan.id}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
-                          {loan.currency} {loan.amount.toLocaleString()} • {loan.termMonths} months
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Purchased {loan.disbursedAt?.toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <Badge className={
-                          loan.status === 'active' ? 'bg-green-100 text-green-800' :
-                          loan.status === 'completed' ? 'bg-blue-100 text-blue-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }>
-                          {loan.status}
-                        </Badge>
-                        <p className="text-sm font-medium mt-1">
-                          Remaining: {loan.currency} {loan.remainingBalance.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="loans">
+            <LoanApplication />
           </TabsContent>
 
           <TabsContent value="payments">
-            <Card className="border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Receipt className="w-5 h-5 text-purple-600" />
-                  <span>Payment Schedule</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {loans.map((loan) => (
-                    <div key={loan.id} className="p-4 border rounded-lg">
-                      <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-semibold">Purchase #{loan.id}</h3>
-                        <Badge variant="outline">
-                          Next: {loan.nextPaymentDate.toLocaleDateString()}
-                        </Badge>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span>Next Payment Amount:</span>
-                        <span className="font-bold text-lg">
-                          {loan.currency} {loan.nextPaymentAmount.toLocaleString()}
-                        </span>
-                      </div>
-                      <Button size="sm" className="mt-2 bg-purple-600 hover:bg-purple-700">
-                        Pay Now
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <PaymentSchedule />
           </TabsContent>
 
           <TabsContent value="vault">
             <VaultDashboard />
+          </TabsContent>
+
+          <TabsContent value="history">
+            <TransactionHistory />
           </TabsContent>
 
           <TabsContent value="profile">
@@ -331,6 +269,11 @@ export function Dashboard() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Loan Application Modal */}
+      {showLoanModal && (
+        <LoanApplication onClose={() => setShowLoanModal(false)} />
+      )}
     </div>
   );
 }
