@@ -29,7 +29,8 @@ import {
   Upload,
   Check,
   AlertTriangle,
-  Info
+  Info,
+  TrendingUp
 } from 'lucide-react';
 
 const profileSchema = z.object({
