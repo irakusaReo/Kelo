@@ -41,6 +41,7 @@ const nextConfig = {
     JWT_SECRET: process.env.JWT_SECRET,
     WALLET_ENCRYPTION_KEY: process.env.WALLET_ENCRYPTION_KEY,
     BASE_RPC_URL: process.env.BASE_RPC_URL,
+    NEXT_FONT_GOOGLE_OPTIMIZED: 'false',
   },
   async headers() {
     return [
