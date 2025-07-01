@@ -6,7 +6,7 @@ const nextConfig = {
   images: { unoptimized: true },
   optimizeFonts: false,
   // Fix Terser build errors
-  swcMinify: true,
+  swcMinify: false, // Disable SWC minification to avoid worker issues
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
@@ -19,17 +19,67 @@ const nextConfig = {
       tls: false,
     };
 
-    // Optimize chunks to avoid Terser issues
+    // Exclude problematic worker files from minification
     if (!dev && !isServer) {
       config.optimization = {
         ...config.optimization,
         minimize: true,
-        minimizer: [
-          ...config.optimization.minimizer.filter(
-            (plugin) => plugin.constructor.name !== 'TerserPlugin'
-          ),
-        ],
+        minimizer: config.optimization.minimizer.map((plugin) => {
+          if (plugin.constructor.name === 'TerserPlugin') {
+            return {
+              ...plugin,
+              options: {
+                ...plugin.options,
+                exclude: [
+                  /HeartbeatWorker/,
+                  /\.worker\./,
+                  /worker\.js$/,
+                ],
+                terserOptions: {
+                  ...plugin.options.terserOptions,
+                  parse: {
+                    ecma: 2020,
+                  },
+                  compress: {
+                    ecma: 2020,
+                    drop_console: true,
+                    drop_debugger: true,
+                  },
+                  mangle: {
+                    safari10: true,
+                  },
+                  format: {
+                    ecma: 2020,
+                    safari10: true,
+                  },
+                },
+              },
+            };
+          }
+          return plugin;
+        }),
       };
+    }
+
+    // Handle worker files properly
+    config.module.rules.push({
+      test: /\.worker\.(js|ts)$/,
+      use: {
+        loader: 'worker-loader',
+        options: {
+          name: 'static/[hash].worker.js',
+          publicPath: '/_next/',
+        },
+      },
+    });
+
+    // Ignore problematic modules during build
+    config.externals = config.externals || [];
+    if (!isServer) {
+      config.externals.push({
+        'utf-8-validate': 'commonjs utf-8-validate',
+        'bufferutil': 'commonjs bufferutil',
+      });
     }
 
     return config;
@@ -56,6 +106,14 @@ const nextConfig = {
       },
     ];
   },
+  // Additional build optimizations for Netlify
+  experimental: {
+    esmExternals: 'loose',
+    serverComponentsExternalPackages: ['@wagmi/core', 'viem'],
+  },
+  // Ensure proper output for static export
+  output: 'standalone',
+  distDir: '.next',
 };
 
 module.exports = nextConfig;
