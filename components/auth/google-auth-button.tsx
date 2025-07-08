@@ -55,7 +55,7 @@ export function GoogleAuthButton({
         try {
           await signInWithGoogle();
           setShowWalletCreation(false);
-          onSuccess?.();
+          // Don't call onSuccess here as it will be handled by the auth provider
         } catch (err) {
           const errorMessage = err instanceof Error ? err.message : 'Authentication failed';
           setAuthError(errorMessage);

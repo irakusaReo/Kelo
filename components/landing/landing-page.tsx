@@ -102,7 +102,7 @@ export function LandingPage() {
 
   const handleGoogleAuthSuccess = () => {
     setShowGetStartedModal(false);
-    // Redirect will be handled by the auth flow
+    // Redirect will be handled by the auth provider
   };
 
   const handleGoogleAuthError = (error: string) => {
