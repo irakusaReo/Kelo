@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PaymentWidget } from '@/components/payment/payment-widget';
+import { QuickViewModal } from '@/components/marketplace/quick-view-modal';
 import { 
   Search, 
   Filter, 
@@ -19,13 +20,16 @@ import {
   Laptop,
   Home,
   Car,
-  Shirt
+  Shirt,
+  Eye
 } from 'lucide-react';
 
 export default function MarketplacePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('popular');
+  const [quickViewProduct, setQuickViewProduct] = useState<any>(null);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
 
   const categories = [
     { id: 'all', name: 'All Categories', icon: <ShoppingCart className="w-4 h-4" /> },
@@ -49,6 +53,8 @@ export default function MarketplacePage() {
       category: 'electronics',
       isPopular: true,
       discount: 10,
+      description: 'Experience premium audio quality with the latest iPhone 15 Pro Max. Featuring advanced camera systems, powerful A17 Pro chip, and all-day battery life.',
+      features: ['A17 Pro chip', '48MP camera system', 'Titanium design', 'USB-C connectivity', 'Action Button'],
     },
     {
       id: '2',
@@ -62,6 +68,8 @@ export default function MarketplacePage() {
       category: 'computers',
       isPopular: true,
       discount: 9,
+      description: 'The incredibly thin and light MacBook Air now features the powerful M2 chip, delivering exceptional performance and up to 18 hours of battery life.',
+      features: ['M2 chip', '13.6-inch Liquid Retina display', 'Up to 18 hours battery', '1080p FaceTime HD camera', 'MagSafe charging'],
     },
     {
       id: '3',
@@ -75,6 +83,8 @@ export default function MarketplacePage() {
       category: 'electronics',
       isPopular: false,
       discount: 14,
+      description: 'Immerse yourself in stunning 4K QLED picture quality with vibrant colors and deep contrast. Smart TV features with built-in streaming apps.',
+      features: ['4K QLED display', 'Quantum HDR', 'Smart TV platform', 'Voice control', 'Multiple HDMI ports'],
     },
     {
       id: '4',
@@ -88,6 +98,8 @@ export default function MarketplacePage() {
       category: 'fashion',
       isPopular: true,
       discount: 17,
+      description: 'Step into comfort and style with the iconic Nike Air Max 270. Features visible Air cushioning and breathable mesh upper.',
+      features: ['Air Max cushioning', 'Breathable mesh upper', 'Durable rubber outsole', 'Iconic design', 'All-day comfort'],
     },
     {
       id: '5',
@@ -101,6 +113,8 @@ export default function MarketplacePage() {
       category: 'electronics',
       isPopular: false,
       discount: 13,
+      description: 'Industry-leading noise cancellation meets exceptional sound quality. Perfect for travel, work, and everyday listening.',
+      features: ['Industry-leading noise cancellation', '30-hour battery life', 'Quick charge', 'Touch controls', 'Voice assistant'],
     },
     {
       id: '6',
@@ -114,6 +128,8 @@ export default function MarketplacePage() {
       category: 'home',
       isPopular: false,
       discount: 17,
+      description: 'Ergonomic gaming chair designed for long gaming sessions. Features adjustable height, lumbar support, and premium materials.',
+      features: ['Ergonomic design', 'Adjustable height', 'Lumbar support', 'Premium materials', '360-degree swivel'],
     },
   ];
 
@@ -137,6 +153,16 @@ export default function MarketplacePage() {
         return b.isPopular ? 1 : -1;
     }
   });
+
+  const handleQuickView = (product: any) => {
+    setQuickViewProduct(product);
+    setIsQuickViewOpen(true);
+  };
+
+  const handleAddToCart = (product: any) => {
+    console.log('Added to cart:', product);
+    // Implement cart functionality
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -211,15 +237,27 @@ export default function MarketplacePage() {
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {sortedProducts.map((product) => (
-            <Card key={product.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-              <div className="relative">
+            <Card key={product.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+              <div className="relative overflow-hidden">
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-48 object-cover"
+                  className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
                 />
+                
+                {/* Quick View Button */}
+                <Button
+                  onClick={() => handleQuickView(product)}
+                  className="absolute inset-0 w-full h-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2 rounded-none"
+                  variant="ghost"
+                >
+                  <Eye className="w-5 h-5" />
+                  Quick View
+                </Button>
+                
+                {/* Badges */}
                 {product.discount > 0 && (
                   <Badge className="absolute top-2 left-2 bg-red-500 text-white">
                     -{product.discount}%
@@ -231,10 +269,12 @@ export default function MarketplacePage() {
                     Popular
                   </Badge>
                 )}
+                
+                {/* Favorite Button */}
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="absolute bottom-2 right-2 bg-white/80 hover:bg-white"
+                  className="absolute bottom-2 right-2 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full w-8 h-8 p-0"
                 >
                   <Heart className="w-4 h-4" />
                 </Button>
@@ -315,6 +355,17 @@ export default function MarketplacePage() {
           </div>
         )}
       </main>
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={isQuickViewOpen}
+        onClose={() => {
+          setIsQuickViewOpen(false);
+          setQuickViewProduct(null);
+        }}
+        onAddToCart={handleAddToCart}
+      />
     </div>
   );
 }

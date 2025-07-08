@@ -247,7 +247,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
 
         {/* Step 1: Personal Information */}
         {currentStep === 1 && (
-          <Card className="border-0 shadow-xl">
+          <Card className="border-0 shadow-xl max-h-[80vh] overflow-y-auto">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <User className="w-5 h-5 text-blue-600" />
@@ -473,7 +473,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
 
         {/* Step 2: Credit Profile */}
         {currentStep === 2 && (
-          <Card className="border-0 shadow-xl">
+          <Card className="border-0 shadow-xl max-h-[80vh] overflow-y-auto">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <CreditCard className="w-5 h-5 text-green-600" />
@@ -709,7 +709,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
 
         {/* Step 3: Document Upload */}
         {currentStep === 3 && (
-          <Card className="border-0 shadow-xl">
+          <Card className="border-0 shadow-xl max-h-[80vh] overflow-y-auto">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Upload className="w-5 h-5 text-purple-600" />
@@ -870,7 +870,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
 
         {/* Step 4: Completion */}
         {currentStep === 4 && (
-          <Card className="border-0 shadow-xl">
+          <Card className="border-0 shadow-xl max-h-[80vh] overflow-y-auto">
             <CardHeader className="text-center">
               <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-green-600" />

@@ -280,7 +280,7 @@ export function AuthFlow({ onComplete, onCancel }: AuthFlowProps) {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto border-0 shadow-xl">
+    <Card className="w-full max-w-md mx-auto border-0 shadow-xl max-h-[80vh] overflow-y-auto">
       <CardHeader className="text-center">
         <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
           {getStepIcon()}
