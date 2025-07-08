@@ -86,8 +86,10 @@
                    </CardTitle>
                  </CardHeader>
                  <CardContent>
-                   <p className="text-gray-600 dark:text-gray-300">
--                    Get instant approval for loans up to KES {((user?.creditScore || 0) * 100).toLocaleString()}
+                      }
+                 <p className="text-gray-600 dark:text-gray-300">
+-                    Get instant approval for loans up to KES {((user?.creditScore || 0) * 100).toLo                    }
+caleString()}
 +                    Get instant approval for purchases up to KES {((user?.creditScore || 0) * 100).toLocaleString()}
                    </p>
                    <Button className="w-full mt-4 bg-green-600 hover:bg-green-700">
