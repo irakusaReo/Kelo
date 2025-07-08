@@ -398,7 +398,7 @@ export function VaultDashboard() {
       {/* Withdraw Modal */}
       {showWithdrawModal && (
         <Dialog open={showWithdrawModal} onOpenChange={setShowWithdrawModal}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center space-x-2">
                 <MinusCircle className="w-5 h-5 text-orange-600" />

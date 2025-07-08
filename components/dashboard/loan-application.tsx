@@ -370,7 +370,7 @@ export function LoanApplication({ onClose }: LoanApplicationProps) {
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Apply for Loan</DialogTitle>
         </DialogHeader>
