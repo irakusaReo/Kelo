@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/auth/auth-provider';
 import { LandingPage } from '@/components/landing/landing-page';
 import { Dashboard } from '@/components/dashboard/dashboard';
 import { WalletConnection } from '@/components/wallet/wallet-connection';
@@ -33,6 +35,15 @@ export default function Home() {
 
 function HomeContent() {
   const { isConnected, isConnecting } = useAccount();
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  // Redirect authenticated users to marketplace
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/marketplace');
+    }
+  }, [isAuthenticated, router]);
 
   if (isConnecting) {
     return <LoadingScreen message="Connecting to wallet..." />;

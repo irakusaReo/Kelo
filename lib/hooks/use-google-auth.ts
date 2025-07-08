@@ -137,8 +137,8 @@ export function useGoogleAuth(): GoogleAuthHook {
             error: null,
           });
           
-          // Redirect to onboarding or dashboard
-          router.push('/onboarding');
+          // Redirect to marketplace after successful login
+          router.push('/marketplace');
         } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
           window.removeEventListener('message', handleMessage);
           popup.close();
