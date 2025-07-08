@@ -17,8 +17,8 @@ import {
   Bell,
   Settings
 } from 'lucide-react';
-import { BNPLApplication } from './bnpl-application';
-import { PaymentSchedule } from './payment-schedule';
+import { BNPLApplication } from '@/components/dashboard/bnpl-application';
+import { PaymentSchedule } from '@/components/dashboard/payment-schedule';
 
 export default function Dashboard() {
   const { user, loading: userLoading } = useUser();
