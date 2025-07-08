@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { MainLayout } from '@/components/layout/main-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PaymentWidget } from '@/components/payment/payment-widget';
 import { QuickViewModal } from '@/components/marketplace/quick-view-modal';
+import { useCart } from '@/lib/hooks/use-cart';
 import { 
   Search, 
   Filter, 
@@ -30,6 +32,7 @@ export default function MarketplacePage() {
   const [sortBy, setSortBy] = useState('popular');
   const [quickViewProduct, setQuickViewProduct] = useState<any>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+  const { addItem } = useCart();
 
   const categories = [
     { id: 'all', name: 'All Categories', icon: <ShoppingCart className="w-4 h-4" /> },
@@ -160,12 +163,12 @@ export default function MarketplacePage() {
   };
 
   const handleAddToCart = (product: any) => {
-    console.log('Added to cart:', product);
-    // Implement cart functionality
+    addItem(product);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <MainLayout>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
@@ -366,6 +369,7 @@ export default function MarketplacePage() {
         }}
         onAddToCart={handleAddToCart}
       />
-    </div>
+      </div>
+    </MainLayout>
   );
 }
