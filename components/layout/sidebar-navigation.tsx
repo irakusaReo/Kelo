@@ -36,6 +36,10 @@ export function SidebarNavigation({ cartItemCount = 0 }: SidebarNavigationProps)
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
+  /**
+   * Main navigation items with their routes and descriptions
+   * Badge property is used for cart item count display
+   */
   const navigationItems = [
     {
       label: 'Marketplace',
@@ -88,16 +92,26 @@ export function SidebarNavigation({ cartItemCount = 0 }: SidebarNavigationProps)
     },
   ];
 
+  /**
+   * Navigate to a specific route and close mobile menu
+   */
   const handleNavigation = (href: string) => {
     router.push(href);
     setIsMobileOpen(false);
   };
 
+  /**
+   * Sign out user and redirect to home page
+   */
   const handleSignOut = async () => {
     await signOut();
     router.push('/');
   };
 
+  /**
+   * Check if current route matches navigation item
+   * Handles special cases for dashboard tabs
+   */
   const isActive = (href: string) => {
     if (href === '/marketplace') return pathname === '/marketplace';
     if (href === '/cart') return pathname === '/cart';
@@ -105,6 +119,10 @@ export function SidebarNavigation({ cartItemCount = 0 }: SidebarNavigationProps)
     return pathname === href;
   };
 
+  /**
+   * Sidebar content component used for both desktop and mobile
+   * Includes header, user info, navigation items, and footer actions
+   */
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Header */}

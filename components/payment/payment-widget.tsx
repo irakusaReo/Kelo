@@ -33,6 +33,11 @@ export function PaymentWidget({ amount, merchantName, productName, onPaymentComp
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  /**
+   * Available payment plans with different terms and fees
+   * pay-in-4: Interest-free, 4 bi-weekly payments
+   * monthly-6/12: Extended plans with interest
+   */
   const paymentPlans = [
     {
       id: 'pay-in-4',
@@ -68,20 +73,23 @@ export function PaymentWidget({ amount, merchantName, productName, onPaymentComp
 
   const selectedPlanData = paymentPlans.find(p => p.id === selectedPlan);
 
+  /**
+   * Handle payment plan selection and move to approval step
+   * Simulates instant approval process
+   */
   const handleContinue = async () => {
     setIsProcessing(true);
-    
-    // Simulate approval process
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
     setIsProcessing(false);
     setStep(2);
   };
 
+  /**
+   * Process the actual payment and complete the transaction
+   * Simulates payment processing and calls completion callback
+   */
   const handlePayment = async () => {
     setIsProcessing(true);
-    
-    // Simulate payment processing
     await new Promise(resolve => setTimeout(resolve, 3000));
     
     const paymentData = {

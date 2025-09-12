@@ -33,6 +33,10 @@ export function LandingPage() {
   const [showGetStartedModal, setShowGetStartedModal] = useState(false);
   const [showWalletModal, setShowWalletModal] = useState(false);
 
+  /**
+   * Core features displayed on the landing page
+   * Each feature has an icon, title, and description
+   */
   const features = [
     {
       icon: CreditCard,
@@ -66,6 +70,10 @@ export function LandingPage() {
     },
   ];
 
+  /**
+   * Platform statistics displayed in the stats section
+   * Shows key metrics to build trust and credibility
+   */
   const stats = [
     { label: 'Total Loans Issued', value: 'KES 2.5B+', icon: DollarSign },
     { label: 'Active Users', value: '50K+', icon: Users },
@@ -73,41 +81,13 @@ export function LandingPage() {
     { label: 'Security Score', value: '99.9%', icon: Lock },
   ];
 
-  const benefits = [
-    {
-      icon: Zap,
-      title: 'Instant Approval',
-      description: 'Get approved in under 2 seconds with our AI-powered credit assessment',
-      highlight: '2 seconds',
-    },
-    {
-      icon: Shield,
-      title: 'Bank-Level Security',
-      description: 'Your funds and data are protected by military-grade encryption',
-      highlight: '256-bit encryption',
-    },
-    {
-      icon: Target,
-      title: 'Flexible Terms',
-      description: 'Choose payment plans from 4 weeks to 24 months that fit your budget',
-      highlight: 'Up to 24 months',
-    },
-    {
-      icon: Clock,
-      title: '24/7 Support',
-      description: 'Get help anytime with our round-the-clock customer support team',
-      highlight: 'Always available',
-    },
-  ];
-
+  /**
+   * Handle successful Google authentication
+   * Closes modal and redirects user to marketplace
+   */
   const handleGoogleAuthSuccess = () => {
     setShowGetStartedModal(false);
-    // Redirect will be handled by the auth provider
-  };
-
-  const handleGoogleAuthError = (error: string) => {
-    console.error('Google auth error:', error);
-    // Error handling is managed within the GoogleAuthButton component
+    // Note: Redirect is handled automatically by AuthProvider
   };
 
   return (
@@ -147,7 +127,7 @@ export function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              className="bg-green-600 hover:bg-green-700 text-lg px-8 py-6"
+              className="bg-green-600 hover:bg-green-700 text-lg px-8 py-6 transform hover:scale-105 transition-transform"
               onClick={() => setShowGetStartedModal(true)}
             >
               Get Started
@@ -358,31 +338,6 @@ export function LandingPage() {
                 </Button>
               </div>
 
-              <Separator />
-
-              {/* Benefits Grid */}
-              <div>
-                <h4 className="font-semibold text-center mb-6">Why Choose Kelo?</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-start space-x-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                      <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg flex-shrink-0">
-                        <benefit.icon className="w-5 h-5 text-green-600" />
-                      </div>
-                      <div>
-                        <h5 className="font-semibold mb-1">{benefit.title}</h5>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                          {benefit.description}
-                        </p>
-                        <Badge variant="outline" className="text-xs">
-                          {benefit.highlight}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               {/* Security Notice */}
               <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
                 <div className="flex items-start space-x-2">
@@ -397,24 +352,6 @@ export function LandingPage() {
                 </div>
               </div>
 
-              {/* Trust Indicators */}
-              <div className="text-center">
-                <p className="text-sm text-gray-500 mb-4">Trusted by 50,000+ users across Kenya</p>
-                <div className="flex justify-center items-center space-x-6 text-xs text-gray-400">
-                  <div className="flex items-center space-x-1">
-                    <CheckCircle className="w-3 h-3 text-green-600" />
-                    <span>CBK Compliant</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Shield className="w-3 h-3 text-blue-600" />
-                    <span>ISO 27001</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Lock className="w-3 h-3 text-purple-600" />
-                    <span>SOC 2 Type II</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </ScrollArea>
         </DialogContent>

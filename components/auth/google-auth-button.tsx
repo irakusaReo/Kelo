@@ -22,7 +22,6 @@ import {
 
 interface GoogleAuthButtonProps {
   onSuccess?: () => void;
-  onError?: (error: string) => void;
   variant?: 'default' | 'outline';
   size?: 'sm' | 'default' | 'lg';
   className?: string;
@@ -30,7 +29,6 @@ interface GoogleAuthButtonProps {
 
 export function GoogleAuthButton({ 
   onSuccess, 
-  onError,
   variant = 'default', 
   size = 'default',
   className = ''
@@ -40,6 +38,10 @@ export function GoogleAuthButton({
   const [walletCreationStep, setWalletCreationStep] = useState(1);
   const [authError, setAuthError] = useState<string | null>(null);
 
+  /**
+   * Initiates Google sign-in process with wallet creation simulation
+   * Shows progress modal during authentication and wallet setup
+   */
   const handleSignIn = async () => {
     try {
       setAuthError(null);
@@ -60,26 +62,36 @@ export function GoogleAuthButton({
           const errorMessage = err instanceof Error ? err.message : 'Authentication failed';
           setAuthError(errorMessage);
           setShowWalletCreation(false);
-          onError?.(errorMessage);
         }
       }, 5500);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to start authentication';
       setAuthError(errorMessage);
       setShowWalletCreation(false);
-      onError?.(errorMessage);
     }
   };
 
+  /**
+   * Get step title based on current wallet creation progress
+   */
+  /**
+   * Retry authentication after an error
+   */
   const handleRetry = () => {
     setAuthError(null);
     handleSignIn();
   };
 
+  /**
+   * Dismiss error message
+   */
   const handleDismissError = () => {
     setAuthError(null);
   };
 
+  /**
+   * Get appropriate icon for current wallet creation step
+   */
   return (
     <>
       <div className="space-y-3">

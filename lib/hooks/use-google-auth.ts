@@ -30,11 +30,17 @@ export function useGoogleAuth(): GoogleAuthHook {
     error: null,
   });
 
-  // Check for existing session on mount
+  /**
+   * Check for existing authentication session on component mount
+   * Verifies stored token with backend
+   */
   useEffect(() => {
     checkExistingSession();
   }, []);
 
+  /**
+   * Verify existing session token and restore authentication state
+   */
   const checkExistingSession = async () => {
     try {
       const token = localStorage.getItem('kelo_auth_token');
@@ -62,7 +68,6 @@ export function useGoogleAuth(): GoogleAuthHook {
           error: null,
         });
       } else {
-        // Invalid token, clear it
         localStorage.removeItem('kelo_auth_token');
         setState(prev => ({ ...prev, isLoading: false }));
       }
@@ -76,11 +81,15 @@ export function useGoogleAuth(): GoogleAuthHook {
     }
   };
 
+  /**
+   * Initiate Google sign-in process using popup window
+   * Handles popup communication and token storage
+   */
   const signInWithGoogle = useCallback(async () => {
     try {
       setState(prev => ({ ...prev, isLoading: true, error: null }));
       
-      // Use fetch instead of window.open to avoid service worker navigation issues
+      // Get auth URL from backend
       const authResponse = await fetch('/api/auth/google', {
         method: 'GET',
         headers: {
@@ -104,7 +113,7 @@ export function useGoogleAuth(): GoogleAuthHook {
       // Get the auth URL from the response
       const authUrl = authResponse.url;
       
-      // Open popup with the auth URL
+      // Open centered popup window
       const popup = window.open(
         authUrl,
         'google-auth',
@@ -116,7 +125,7 @@ export function useGoogleAuth(): GoogleAuthHook {
         throw new Error('Failed to open authentication popup. Please allow popups for this site.');
       }
 
-      // Listen for popup messages
+      // Handle popup communication
       const handleMessage = (event: MessageEvent) => {
         if (event.origin !== window.location.origin) return;
         
@@ -124,7 +133,6 @@ export function useGoogleAuth(): GoogleAuthHook {
           window.removeEventListener('message', handleMessage);
           popup.close();
           
-          // Store token and update state
           if (event.data.token) {
             localStorage.setItem('kelo_auth_token', event.data.token);
           }
@@ -137,7 +145,6 @@ export function useGoogleAuth(): GoogleAuthHook {
             error: null,
           });
           
-          // Redirect to marketplace after successful login
           router.push('/marketplace');
         } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
           window.removeEventListener('message', handleMessage);
@@ -153,7 +160,7 @@ export function useGoogleAuth(): GoogleAuthHook {
       
       window.addEventListener('message', handleMessage);
       
-      // Check if popup was closed manually
+      // Monitor popup closure
       const checkClosed = setInterval(() => {
         if (popup.closed) {
           clearInterval(checkClosed);
@@ -169,7 +176,7 @@ export function useGoogleAuth(): GoogleAuthHook {
         }
       }, 1000);
       
-      // Timeout after 5 minutes
+      // Set authentication timeout
       setTimeout(() => {
         if (!popup.closed) {
           popup.close();
@@ -195,11 +202,14 @@ export function useGoogleAuth(): GoogleAuthHook {
     }
   }, [router, state.isLoading]);
 
+  /**
+   * Sign out user and clear authentication state
+   * Calls logout endpoint and clears local storage
+   */
   const signOut = useCallback(async () => {
     try {
       setState(prev => ({ ...prev, isLoading: true }));
       
-      // Call logout endpoint
       await fetch('/api/auth/logout', {
         method: 'POST',
         headers: {
@@ -207,7 +217,6 @@ export function useGoogleAuth(): GoogleAuthHook {
         },
       });
 
-      // Clear local storage
       localStorage.removeItem('kelo_auth_token');
       
       setState({
@@ -229,10 +238,16 @@ export function useGoogleAuth(): GoogleAuthHook {
     }
   }, [router]);
 
+  /**
+   * Clear current error state
+   */
   const clearError = useCallback(() => {
     setState(prev => ({ ...prev, error: null }));
   }, []);
 
+  /**
+   * Refresh wallet information for current user
+   */
   const refreshWallet = useCallback(async () => {
     if (!state.user) return;
 
@@ -240,7 +255,6 @@ export function useGoogleAuth(): GoogleAuthHook {
       const wallet = await smartWalletService.getWalletByUserId(state.user.id);
       setState(prev => ({ ...prev, wallet }));
     } catch (error) {
-      console.error('Error refreshing wallet:', error);
     }
   }, [state.user]);
 
