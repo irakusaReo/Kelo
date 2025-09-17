@@ -7,8 +7,8 @@ const nextConfig = {
   },
   images: { unoptimized: true },
   optimizeFonts: false,
-  // Fix Terser build errors
-  swcMinify: false, // Disable SWC minification to avoid worker issues
+  // Enable SWC minification (default in Next 13+)
+  swcMinify: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
@@ -20,48 +20,6 @@ const nextConfig = {
       net: false,
       tls: false,
     };
-
-    // Exclude problematic worker files from minification
-    if (!dev && !isServer) {
-      config.optimization = {
-        ...config.optimization,
-        minimize: false,
-        minimizer: config.optimization.minimizer.map((plugin) => {
-          if (plugin.constructor.name === 'TerserPlugin') {
-            return {
-              ...plugin,
-              options: {
-                ...plugin.options,
-                exclude: [
-                  /HeartbeatWorker/,
-                  /\.worker\./,
-                  /worker\.js$/,
-                ],
-                terserOptions: {
-                  ...plugin.options.terserOptions,
-                  parse: {
-                    ecma: 2020,
-                  },
-                  compress: {
-                    ecma: 2020,
-                    drop_console: true,
-                    drop_debugger: true,
-                  },
-                  mangle: {
-                    safari10: true,
-                  },
-                  format: {
-                    ecma: 2020,
-                    safari10: true,
-                  },
-                },
-              },
-            };
-          }
-          return plugin;
-        }),
-      };
-    }
 
     // Handle worker files properly
     config.module.rules.push({
