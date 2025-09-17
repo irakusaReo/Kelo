@@ -1,14 +1,9 @@
-const withTM = require('next-transpile-modules')(['wagmi', 'viem', '@wagmi/core', '@coinbase/wallet-sdk']);
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
   images: { unoptimized: true },
-  optimizeFonts: false,
-  // Enable SWC minification (default in Next 13+)
-  swcMinify: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
@@ -68,12 +63,11 @@ const nextConfig = {
   },
   // Additional build optimizations for Netlify
   experimental: {
-    esmExternals: 'loose',
-    serverComponentsExternalPackages: ['@wagmi/core', 'viem'],
   },
+  serverExternalPackages: ['@wagmi/core', 'viem'],
   // Ensure proper output for static export
   output: 'standalone',
   distDir: '.next',
 };
 
-module.exports = withTM(nextConfig);
+module.exports = nextConfig;
