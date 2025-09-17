@@ -23,7 +23,7 @@ const nextConfig = {
     if (!dev && !isServer) {
       config.optimization = {
         ...config.optimization,
-        minimize: true,
+        minimize: false,
         minimizer: config.optimization.minimizer.map((plugin) => {
           if (plugin.constructor.name === 'TerserPlugin') {
             return {
