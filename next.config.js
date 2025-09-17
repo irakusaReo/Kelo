@@ -1,3 +1,5 @@
+const withTM = require('next-transpile-modules')(['wagmi', 'viem', '@wagmi/core', '@coinbase/wallet-sdk']);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -116,4 +118,4 @@ const nextConfig = {
   distDir: '.next',
 };
 
-module.exports = nextConfig;
+module.exports = withTM(nextConfig);
