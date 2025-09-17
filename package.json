@@ -87,7 +87,8 @@
     "@types/jest": "^29.5.12",
     "@types/uuid": "^9.0.7",
     "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0"
+    "jest-environment-jsdom": "^29.7.0",
+    "next-transpile-modules": "^10.0.1"
   },
   "resolutions": {
     "typescript": "5.6.3"
