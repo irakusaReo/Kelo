@@ -646,7 +646,7 @@ export function ProfileSettings() {
                       <Button 
                         variant="outline" 
                         className="border-red-200 text-red-600 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950"
-                        disabled={user?.activeLoans && user.activeLoans > 0}
+                        disabled={!!(user?.activeLoans && user.activeLoans > 0)}
                       >
                         Close Account
                       </Button>

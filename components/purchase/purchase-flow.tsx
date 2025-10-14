@@ -19,7 +19,8 @@ import {
   Clock,
   DollarSign,
   Smartphone,
-  Wallet
+  Wallet,
+  LockIcon
 } from 'lucide-react';
 
 interface PurchaseItem {
@@ -372,7 +373,7 @@ export function PurchaseFlow({ item, onComplete }: PurchaseFlowProps) {
                   <span>Secure</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <Lock className="w-3 h-3" />
+                  <LockIcon className="w-3 h-3" />
                   <span>Encrypted</span>
                 </div>
                 <div className="flex items-center space-x-1">
