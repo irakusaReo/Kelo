@@ -141,7 +141,7 @@ export function GoogleAuthButton({
 
       {/* Wallet Creation Modal */}
       <Dialog open={showWalletCreation} onOpenChange={() => {}}>
-        <DialogContent className="max-w-md" hideCloseButton>
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="text-center">Setting up your account</DialogTitle>
           </DialogHeader>
