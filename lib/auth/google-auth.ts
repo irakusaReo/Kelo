@@ -132,6 +132,7 @@ class GoogleAuthService {
       smartWalletId,
       createdAt: new Date(),
       expiresAt,
+      user,
     };
 
     const token = await new SignJWT(session)
