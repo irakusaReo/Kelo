@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 const errorMessages: Record<string, string> = {
   access_denied: 'You cancelled the authentication process.',
@@ -15,7 +16,7 @@ const errorMessages: Record<string, string> = {
   invalid_token: 'Invalid authentication token.',
 };
 
-export default function AuthErrorPage() {
+function AuthError() {
   const searchParams = useSearchParams();
   const error = searchParams.get('error') || 'unknown';
   const errorMessage = errorMessages[error] || 'An unknown error occurred.';
@@ -65,5 +66,13 @@ export default function AuthErrorPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function AuthErrorPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthError />
+    </Suspense>
   );
 }
