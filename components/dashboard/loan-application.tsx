@@ -26,6 +26,7 @@ const loanSchema = z.object({
 });
 
 type LoanFormData = z.infer<typeof loanSchema>;
+type LoanTerm = typeof LOAN_TERMS[number];
 
 interface LoanApplicationProps {
   onClose?: () => void;
@@ -34,7 +35,7 @@ interface LoanApplicationProps {
 export function LoanApplication({ onClose }: LoanApplicationProps) {
   const { user } = useUser();
   const [step, setStep] = useState(1);
-  const [selectedTerm, setSelectedTerm] = useState<typeof LOAN_TERMS[0] | null>(null);
+  const [selectedTerm, setSelectedTerm] = useState<LoanTerm | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<LoanFormData>({
@@ -86,7 +87,7 @@ export function LoanApplication({ onClose }: LoanApplicationProps) {
     setStep(4); // Success step
   };
 
-  const handleTermSelection = (term: typeof LOAN_TERMS[0]) => {
+  const handleTermSelection = (term: LoanTerm) => {
     setSelectedTerm(term);
     form.setValue('termMonths', term.months);
   };
